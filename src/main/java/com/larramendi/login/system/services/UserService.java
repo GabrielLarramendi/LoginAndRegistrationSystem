@@ -3,7 +3,6 @@ package com.larramendi.login.system.services;
 import com.larramendi.login.system.dto.UserDTO;
 import com.larramendi.login.system.entities.User;
 import com.larramendi.login.system.repositories.UserRepository;
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +24,21 @@ public class UserService {
         return new UserDTO(savedUser);
     }
 
-    public void createUser(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO) {
         User user = mapDtoToUser(userDTO);
         userRepository.save(user);
+        return new UserDTO(user);
     }
 
-    public void updateUser(UserDTO userDTO) {
-        User existentUser = userRepository.findById(userDTO.getId()).get();
+    public UserDTO updateUser(UserDTO userDTO, Long id) {
+        User existentUser = userRepository.findById(id).get();
         existentUser.setName(userDTO.getName());
         existentUser.setBirth(userDTO.getBirth());
         existentUser.setEmail(userDTO.getEmail());
         existentUser.setPassword(userDTO.getPassword());
         userRepository.save(existentUser);
+
+        return new UserDTO(existentUser);
     }
 
     public void deleteUser(Long id) {
