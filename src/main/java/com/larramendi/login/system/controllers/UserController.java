@@ -1,6 +1,8 @@
 package com.larramendi.login.system.controllers;
 
+import com.larramendi.login.system.controllers.exceptions.EmailAlreadyExistsException;
 import com.larramendi.login.system.dto.UserDTO;
+import com.larramendi.login.system.entities.User;
 import com.larramendi.login.system.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,14 +32,19 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        User existentUser = userService.findUserByEmail(userDTO.getEmail());
+        String msg;
+        if (existentUser != null && existentUser.getEmail() != null && !existentUser.getEmail().isEmpty()) {
+            throw new EmailAlreadyExistsException("Esse e-mail ja esta cadastrado!");
+        }
         UserDTO newUser = userService.createUser(userDTO);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long id) {
         UserDTO updateUser = userService.updateUser(userDTO, id);
-         return new ResponseEntity<>(updateUser, HttpStatus.OK);
+        return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

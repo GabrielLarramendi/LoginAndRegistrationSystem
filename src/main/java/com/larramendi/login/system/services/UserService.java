@@ -11,8 +11,12 @@ import java.util.List;
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
+    
     @Autowired
-    UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public List<UserDTO> getAllUsers() {
         List<User> savedListUsers = userRepository.findAll();
@@ -20,7 +24,9 @@ public class UserService {
     }
 
     public UserDTO getUserById(Long id) {
-        User savedUser = userRepository.findById(id).get();
+        User savedUser = userRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado."));
         return new UserDTO(savedUser);
     }
 
@@ -31,25 +37,33 @@ public class UserService {
     }
 
     public UserDTO updateUser(UserDTO userDTO, Long id) {
-        User existentUser = userRepository.findById(id).get();
+        User existentUser = userRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado."));
         existentUser.setName(userDTO.getName());
-        existentUser.setBirth(userDTO.getBirth());
         existentUser.setEmail(userDTO.getEmail());
         existentUser.setPassword(userDTO.getPassword());
         userRepository.save(existentUser);
-
         return new UserDTO(existentUser);
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        }
+        else {
+            throw new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado");
+        }
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     private User mapDtoToUser(UserDTO userDTO) {
         return new User(
                 userDTO.getId(),
                 userDTO.getName(),
-                userDTO.getBirth(),
                 userDTO.getEmail(),
                 userDTO.getPassword());
     }
