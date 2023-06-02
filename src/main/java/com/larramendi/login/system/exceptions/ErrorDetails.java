@@ -1,4 +1,4 @@
-package com.larramendi.login.system.controllers.exceptions;
+package com.larramendi.login.system.exceptions;
 
 public class ErrorDetails {
 

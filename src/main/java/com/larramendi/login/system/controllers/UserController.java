@@ -1,6 +1,6 @@
 package com.larramendi.login.system.controllers;
 
-import com.larramendi.login.system.controllers.exceptions.EmailAlreadyExistsException;
+import com.larramendi.login.system.exceptions.EmailAlreadyExistsException;
 import com.larramendi.login.system.dto.UserDTO;
 import com.larramendi.login.system.entities.User;
 import com.larramendi.login.system.services.UserService;
@@ -33,10 +33,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         User existentUser = userService.findUserByEmail(userDTO.getEmail());
-        String msg;
-        if (existentUser != null && existentUser.getEmail() != null && !existentUser.getEmail().isEmpty()) {
-            throw new EmailAlreadyExistsException("Esse e-mail ja esta cadastrado!");
-        }
         UserDTO newUser = userService.createUser(userDTO);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
@@ -50,7 +46,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        String msg = "User successfully deleted!";
+        String msg = "Usuario deletado com sucesso!";
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 

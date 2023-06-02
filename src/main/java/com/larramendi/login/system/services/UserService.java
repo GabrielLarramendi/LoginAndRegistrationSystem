@@ -1,5 +1,7 @@
 package com.larramendi.login.system.services;
 
+import com.larramendi.login.system.exceptions.EmailAlreadyExistsException;
+import com.larramendi.login.system.exceptions.IdNotFoundException;
 import com.larramendi.login.system.dto.UserDTO;
 import com.larramendi.login.system.entities.User;
 import com.larramendi.login.system.repositories.UserRepository;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -26,12 +29,16 @@ public class UserService {
     public UserDTO getUserById(Long id) {
         User savedUser = userRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado."));
+                .orElseThrow(() -> new IdNotFoundException("Usuario com o Id " + id + " nao encontrado."));
         return new UserDTO(savedUser);
     }
 
     public UserDTO createUser(UserDTO userDTO) {
         User user = mapDtoToUser(userDTO);
+        User existentUser = findUserByEmail(userDTO.getEmail());
+        if (existentUser != null && existentUser.getEmail() != null && !existentUser.getEmail().isEmpty()) {
+            throw new EmailAlreadyExistsException("Esse e-mail ja esta cadastrado!");
+        }
         userRepository.save(user);
         return new UserDTO(user);
     }
@@ -39,7 +46,12 @@ public class UserService {
     public UserDTO updateUser(UserDTO userDTO, Long id) {
         User existentUser = userRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado."));
+                .orElseThrow(() -> new IdNotFoundException("Usuario com o Id " + id + " nao encontrado."));
+
+        User existentUserByEmail = findUserByEmail(userDTO.getEmail());
+        if (existentUserByEmail != null && existentUserByEmail.getEmail() != null && !existentUserByEmail.getEmail().isEmpty()) {
+            throw new EmailAlreadyExistsException("Esse e-mail ja esta cadastrado!");
+        }
         existentUser.setName(userDTO.getName());
         existentUser.setEmail(userDTO.getEmail());
         existentUser.setPassword(userDTO.getPassword());
@@ -52,7 +64,7 @@ public class UserService {
             userRepository.deleteById(id);
         }
         else {
-            throw new IllegalArgumentException("Usuario com o Id " + id + " nao encontrado");
+            throw new IdNotFoundException("Usuario com o Id " + id + " nao encontrado");
         }
     }
 
