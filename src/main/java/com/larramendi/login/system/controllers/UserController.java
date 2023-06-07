@@ -1,6 +1,5 @@
 package com.larramendi.login.system.controllers;
 
-import com.larramendi.login.system.exceptions.EmailAlreadyExistsException;
 import com.larramendi.login.system.dto.UserDTO;
 import com.larramendi.login.system.entities.User;
 import com.larramendi.login.system.services.UserService;
