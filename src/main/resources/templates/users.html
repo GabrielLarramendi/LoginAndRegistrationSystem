@@ -14,19 +14,22 @@
     <title>Home Page</title>
 </head>
 <body>
-    <table class="table table-striped table-hover table-bordered">
+    <table class="table table-striped table-bordered">
         <thead class="table-dark>">
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Password</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="user : ${users}">
-                <td th:text="${user.name}"></td>
+
+                <td>
+                    <a th:href="@{/user/{id}(id=${user.id})}" style="text-decoration: none;">
+                        <div th:text="${user.name}"></div>
+                    </a>
+                </td>
                 <td th:text="${user.email}"></td>
-                <td th:text="${user.password}"></td>
             </tr>
         </tbody>
     </table>

@@ -8,20 +8,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@RestController
-public class HomeController {
+@Controller
+public class HelloWorldController {
 
     @Autowired
     UserService userService;
 
-    @GetMapping({"/users"})
-    public String listUsers(Model model) {
-        List<UserDTO> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+    @GetMapping("users")
+    public String message(Model model) {
+        List<UserDTO> userList = userService.getAllUsers();
+        model.addAttribute("users", userList);
         return "users";
+    }
+
+    @GetMapping("user/{id}")
+    public String getUserById(Model model, @PathVariable Long id) {
+        UserDTO savedUser = userService.getUserById(id);
+        model.addAttribute("user", savedUser);
+        return "user";
     }
 }
