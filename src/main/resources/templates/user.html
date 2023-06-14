@@ -19,6 +19,7 @@
             <p> Name: <strong th:text="*{name}"></strong></p>
             <p> Email: <strong th:text="*{email}"></strong></p>
             <p> Password: <strong th:text="*{password}"></strong></p>
+            <a class="btn btn-danger" th:href="@{/users/{userId}/delete(userId=${user.id})}">Delete</a>
         </div>
         <a th:href="@{/users}">Voltar para a lista de todos os usuarios</a>
     </body>

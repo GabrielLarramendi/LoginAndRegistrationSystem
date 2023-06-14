@@ -31,8 +31,8 @@ public class PagesController {
         return "user";
     }
 
-    @DeleteMapping("user/{id}")
-    public String deleteUserById(Model model, @PathVariable Long id) {
+    @GetMapping("users/{id}/delete")
+    public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "redirect:/users";
     }
