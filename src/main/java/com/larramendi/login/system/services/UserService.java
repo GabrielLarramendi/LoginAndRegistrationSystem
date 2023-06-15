@@ -49,7 +49,7 @@ public class UserService {
 
         User existentUserByEmail = findUserByEmail(userDTO.getEmail());
         if (existentUserByEmail != null && existentUserByEmail.getEmail() != null && !existentUserByEmail.getEmail().isEmpty()) {
-            throw new EmailAlreadyExistsException("Esse e-mail ja esta cadastrado!");
+            throw new EmailAlreadyExistsException("Email already exists!");
         }
         existentUser.setName(userDTO.getName());
         existentUser.setEmail(userDTO.getEmail());
