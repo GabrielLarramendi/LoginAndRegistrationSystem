@@ -19,17 +19,17 @@ public class UserController {
     @GetMapping("register")
     public String userRegistrationPage(Model model) {
         UserDTO userDTO = new UserDTO(); //Vazio para armazenar os dados do form
-        model.addAttribute("userToRegister", userDTO);
+        model.addAttribute("user", userDTO);
 
         return "register-form";
     }
 
     @PostMapping("register/save")
-    public String submitForm(@Valid @ModelAttribute ("userToRegister") UserDTO userDTO,
+    public String submitForm(@Valid @ModelAttribute ("user") UserDTO userDTO,
                              BindingResult result,
                              Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("userToRegister", userDTO);
+            model.addAttribute("user", userDTO);
             return "register-form";
         }
 
@@ -38,7 +38,7 @@ public class UserController {
             return "redirect:/users";
         } catch (EmailAlreadyExistsException e) {
             model.addAttribute("emailError", "Email already exists");
-            model.addAttribute("userToRegister", userDTO);
+            model.addAttribute("user", userDTO);
             return "register-form";
         }
     }
@@ -47,6 +47,34 @@ public class UserController {
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "redirect:/users";
+    }
+
+    @GetMapping("users/{id}/edit")
+    public String editUser(@PathVariable Long id, Model model) {
+        UserDTO user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "edit-user";
+    }
+
+    @PostMapping("users/{id}")
+    public String updateUser(@PathVariable Long id,
+                             @Valid @ModelAttribute("user") UserDTO userDTO,
+                             BindingResult result,
+                             Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("user", userDTO);
+            return "edit-user";
+        }
+
+        try {
+            UserDTO user = userService.updateUser(userDTO, id);
+            return "redirect:/users";
+        } catch (EmailAlreadyExistsException e) {
+            model.addAttribute("emailError", "Email already exists");
+            model.addAttribute("user", userDTO);
+            return "edit-user";
+        }
     }
 
 }
