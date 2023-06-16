@@ -70,7 +70,7 @@ public class UserController {
             UserDTO userToSave = userService.updateUser(userDTO, id);
             return "redirect:/users";
         } catch (EmailAlreadyExistsException e) {
-            model.addAttribute("emailError", "Email already exists");
+            model.addAttribute("emailError", e.getMessage());
             model.addAttribute("user", userDTO);
             return "updateUser";
             }
