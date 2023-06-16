@@ -10,27 +10,38 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    @GetMapping("register")
-    public String userRegistrationPage(Model model) {
-        UserDTO userDTO = new UserDTO(); //Vazio para armazenar os dados do form
-        model.addAttribute("user", userDTO);
-
-        return "register-form";
+    //Retorna as informacoes de um unico usuario
+    @GetMapping("user/{id}")
+    public String getUserById(Model model, @PathVariable Long id) {
+        UserDTO savedUser = userService.getUserById(id);
+        model.addAttribute("user", savedUser);
+        return "user";
     }
 
-    @PostMapping("register/save")
+    //Retorna a lista com todos os usuarios
+    @GetMapping("users")
+    public String message(Model model) {
+        List<UserDTO> userList = userService.getAllUsers();
+        model.addAttribute("users", userList);
+        return "users";
+    }
+
+    //Criar novo usuario
+    @PostMapping("/register/save")
     public String submitForm(@Valid @ModelAttribute ("user") UserDTO userDTO,
                              BindingResult result,
                              Model model) {
         if (result.hasErrors()) {
             model.addAttribute("user", userDTO);
-            return "register-form";
+            return "register";
         }
 
         try {
@@ -39,24 +50,12 @@ public class UserController {
         } catch (EmailAlreadyExistsException e) {
             model.addAttribute("emailError", "Email already exists");
             model.addAttribute("user", userDTO);
-            return "register-form";
+            return "register";
         }
     }
 
-    @GetMapping("users/{id}/delete")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return "redirect:/users";
-    }
-
-    @GetMapping("users/{id}/edit")
-    public String editUser(@PathVariable Long id, Model model) {
-        UserDTO user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "edit-user";
-    }
-
-    @PostMapping("users/{id}")
+    //Atualizar usuario existente
+    @PostMapping("users/{id}/update")
     public String updateUser(@PathVariable Long id,
                              @Valid @ModelAttribute("user") UserDTO userDTO,
                              BindingResult result,
@@ -64,17 +63,24 @@ public class UserController {
 
         if (result.hasErrors()) {
             model.addAttribute("user", userDTO);
-            return "edit-user";
+            return "updateUser";
         }
 
         try {
-            UserDTO user = userService.updateUser(userDTO, id);
+            UserDTO userToSave = userService.updateUser(userDTO, id);
             return "redirect:/users";
         } catch (EmailAlreadyExistsException e) {
             model.addAttribute("emailError", "Email already exists");
             model.addAttribute("user", userDTO);
-            return "edit-user";
-        }
+            return "updateUser";
+            }
+    }
+
+    //Deletar usuario do banco de dados
+    @GetMapping("users/{id}/delete")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return "redirect:/users";
     }
 
 }

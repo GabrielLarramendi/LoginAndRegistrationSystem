@@ -21,8 +21,8 @@
                 <p> Name: <strong th:text="*{name}"></strong></p>
                 <p> Email: <strong th:text="*{email}"></strong></p>
                 <p> Password: <strong th:text="*{password}"></strong></p>
-                <a class="btn btn-danger" th:href="@{/users/{userId}/delete(userId=${user.id})}" onclick="return confirm('Tem certeza que deseja deletar o usuário?')">Delete</a>
-                <a class="btn btn-primary" th:href="@{/users/{userId}/edit(userId=${user.id})}">Edit User</a>
+                <a class="btn btn-danger" th:href="@{/users/{id}/delete(id=${user.id})}" onclick="return confirm('Tem certeza que deseja deletar o usuário?')">Delete</a>
+                <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${user.id})}">Edit User</a>
             </div>
             <a th:href="@{/users}">Voltar para a lista de todos os usuarios</a>
         </div>

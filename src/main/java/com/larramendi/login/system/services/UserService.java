@@ -48,7 +48,7 @@ public class UserService {
                 .orElseThrow(() -> new IdNotFoundException("Usuario com o Id " + id + " nao encontrado."));
 
         User existentUserByEmail = findUserByEmail(userDTO.getEmail());
-        if (existentUserByEmail != null && existentUserByEmail.getEmail() != null && !existentUserByEmail.getEmail().isEmpty()) {
+        if (existentUserByEmail != null && existentUserByEmail.getEmail() != null && !existentUserByEmail.getEmail().isEmpty() && existentUserByEmail != existentUser) {
             throw new EmailAlreadyExistsException("Email already exists!");
         }
         existentUser.setName(userDTO.getName());

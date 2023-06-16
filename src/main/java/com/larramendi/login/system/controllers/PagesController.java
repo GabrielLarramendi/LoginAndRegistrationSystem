@@ -16,17 +16,27 @@ public class PagesController {
     @Autowired
     UserService userService;
 
-    @GetMapping("users")
-    public String message(Model model) {
-        List<UserDTO> userList = userService.getAllUsers();
-        model.addAttribute("users", userList);
-        return "users";
+    //Retorna a pagina Index
+    @GetMapping("/index")
+    public String home() {
+        return "index";
     }
 
-    @GetMapping("user/{id}")
-    public String getUserById(Model model, @PathVariable Long id) {
-        UserDTO savedUser = userService.getUserById(id);
-        model.addAttribute("user", savedUser);
-        return "user";
+    /*Metodo que adiciona ao Model atributos que serao enviados para a view
+      O objeto UserDTO estará disponível para ser acessado e exibido ou usado para preencher um formulário.
+      O método retorna a string "register-form", que é o nome da view que será renderizada e exibida ao usuário.*/
+    @GetMapping("/register")
+    public String userRegistrationPage(Model model) {
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("user", userDTO);
+        return "register";
+    }
+
+    //Renderiza a pagina com os campos para alterar um unico usuario
+    @GetMapping("users/{id}/edit")
+    public String editUser(@PathVariable Long id, Model model) {
+        UserDTO user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "updateUser";
     }
 }
